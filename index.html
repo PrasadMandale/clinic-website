@@ -3429,8 +3429,9 @@
           (notes.value.trim() ? `📝 *Notes:* ${notes.value.trim()}\n` : '') +
           `\n✅ Please confirm my appointment. Thank you!`
         );
-        setTimeout(() => { window.open(`https://wa.me/${CLINIC_PHONE}?text=${msg}`, '_blank'); }, 1500);
-
+setTimeout(() => {
+  window.location.href = `https://wa.me/${CLINIC_PHONE}?text=${msg}`;
+}, 1500);
       } catch (err) {
         console.error('Unexpected error:', err);
         alert('❌ Something went wrong. Please call us directly at +91 95884 27319');
