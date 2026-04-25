@@ -252,6 +252,24 @@
       box-shadow: var(--shadow-sm)
     }
 
+    .nav-logo-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo-img {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+      transition: transform var(--t);
+    }
+
+    .nav-logo-link:hover .nav-logo-img {
+      transform: scale(1.05);
+    }
+
     .nav-logo {
       display: flex;
       flex-direction: column
@@ -2302,10 +2320,13 @@
 
   <!-- NAVBAR -->
   <nav id="navbar">
-    <div class="nav-logo">
-      <span class="nav-logo-title">Dr. Manisha's</span>
-      <span class="nav-logo-sub">Advanced Multispeciality Dental Clinic</span>
-    </div>
+    <a href="#" class="nav-logo-link">
+      <img src="images/logo.png" alt="Logo" class="nav-logo-img" />
+      <div class="nav-logo">
+        <span class="nav-logo-title">Dr. Manisha's</span>
+        <span class="nav-logo-sub">Advanced Multispeciality Dental Clinic</span>
+      </div>
+    </a>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#services">Services</a></li>
@@ -2785,6 +2806,7 @@
   <footer>
     <div class="footer-grid">
       <div>
+        <img src="images/logo.png" alt="Clinic Logo" style="height: 60px; margin-bottom: 16px; display: block;" />
         <div class="footer-brand">Dr. Manisha's Advanced Multispeciality Dental Clinic</div>
         <p class="footer-desc">Advanced Multispeciality Dental Care in Wakad, Pune. Modern, painless, patient-first
           dentistry since 2014.</p>
@@ -3429,9 +3451,9 @@
           (notes.value.trim() ? `📝 *Notes:* ${notes.value.trim()}\n` : '') +
           `\n✅ Please confirm my appointment. Thank you!`
         );
-setTimeout(() => {
-  window.location.href = `https://wa.me/${CLINIC_PHONE}?text=${msg}`;
-}, 1500);
+        setTimeout(() => {
+          window.location.href = `https://wa.me/${CLINIC_PHONE}?text=${msg}`;
+        }, 1500);
       } catch (err) {
         console.error('Unexpected error:', err);
         alert('❌ Something went wrong. Please call us directly at +91 95884 27319');
