@@ -2240,6 +2240,15 @@
         padding: 0 20px
       }
 
+      .nav-actions {
+        gap: 8px;
+      }
+
+      .btn-nav-book {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+      }
+
       #navbar {
         padding: 16px 20px
       }
@@ -3156,8 +3165,8 @@
       // Pinned scroll (Runs on all devices)
       function getScrollAmount() {
         let trackWidth = track.scrollWidth;
-        // Adjust buffer for mobile since padding/gap is smaller
-        let buffer = window.innerWidth > 768 ? 160 : 60;
+        // Desktop needs buffer for fade mask, mobile ends exactly at the last card
+        let buffer = window.innerWidth > 768 ? 160 : 0;
         return Math.max(0, trackWidth - window.innerWidth + buffer);
       }
 
