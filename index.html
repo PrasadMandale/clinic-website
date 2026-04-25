@@ -75,6 +75,11 @@
       padding: 0
     }
 
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
     html {
       scroll-behavior: smooth
     }
@@ -84,7 +89,6 @@
       background: var(--bg);
       color: var(--text);
       transition: background var(--t), color var(--t);
-      overflow-x: hidden
     }
 
     h1,
@@ -2163,7 +2167,51 @@
 
     @media(max-width:768px) {
       section {
-        padding: 70px 0
+        padding: 50px 0
+      }
+
+      .hero-title {
+        font-size: clamp(2rem, 8vw, 2.5rem);
+      }
+
+      .sec-title {
+        font-size: clamp(1.8rem, 6vw, 2.2rem);
+      }
+
+      .nav-logo-link {
+        gap: 8px;
+      }
+
+      .nav-logo-img {
+        height: 36px;
+      }
+
+      .nav-logo-title {
+        font-size: 1.1rem;
+      }
+
+      .nav-logo-sub {
+        display: none;
+      }
+
+      .services-horiz-wrap {
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 20px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .services-horiz-wrap::-webkit-scrollbar {
+        display: none;
+      }
+
+      .services-horiz-track {
+        padding: 20px;
+      }
+
+      .svc-card {
+        scroll-snap-align: center;
+        flex: 0 0 280px;
       }
 
       .sw {
@@ -3084,38 +3132,41 @@
       );
 
       // Pinned scroll
-      function getScrollAmount() {
-        let trackWidth = track.scrollWidth;
-        return Math.max(0, trackWidth - window.innerWidth + 160); // buffer
-      }
+      let mm = gsap.matchMedia();
+      mm.add("(min-width: 769px)", () => {
+        function getScrollAmount() {
+          let trackWidth = track.scrollWidth;
+          return Math.max(0, trackWidth - window.innerWidth + 160); // buffer
+        }
 
-      const tween = gsap.to(track, {
-        x: () => -getScrollAmount(),
-        ease: "none"
-      });
-
-      ScrollTrigger.create({
-        trigger: "#services",
-        start: "center center",
-        end: () => `+=${getScrollAmount()}`,
-        pin: true,
-        animation: tween,
-        scrub: 1,
-        invalidateOnRefresh: true
-      });
-
-      if (fill) {
-        gsap.to(fill, {
-          width: "100%",
-          ease: "none",
-          scrollTrigger: {
-            trigger: "#services",
-            start: "center center",
-            end: () => `+=${getScrollAmount()}`,
-            scrub: 1
-          }
+        const tween = gsap.to(track, {
+          x: () => -getScrollAmount(),
+          ease: "none"
         });
-      }
+
+        ScrollTrigger.create({
+          trigger: "#services",
+          start: "center center",
+          end: () => `+=${getScrollAmount()}`,
+          pin: true,
+          animation: tween,
+          scrub: 1,
+          invalidateOnRefresh: true
+        });
+
+        if (fill) {
+          gsap.to(fill, {
+            width: "100%",
+            ease: "none",
+            scrollTrigger: {
+              trigger: "#services",
+              start: "center center",
+              end: () => `+=${getScrollAmount()}`,
+              scrub: 1
+            }
+          });
+        }
+      });
     })();
 
     // ─── WHY CHOOSE US ─────────────────────────────────────────────
