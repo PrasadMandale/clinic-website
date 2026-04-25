@@ -2208,11 +2208,14 @@
         max-width: 190px;
       }
 
+      .services-horiz-wrap::before,
+      .services-horiz-wrap::after {
+        display: none;
+      }
+
       .services-horiz-track {
-        padding: 20px 40px 40px 20px;
-        /* Reduced right padding for mobile */
+        padding: 20px 20px 40px 20px;
         gap: 16px;
-        /* Tighter gap */
       }
 
       .svc-card {
@@ -3164,9 +3167,17 @@
 
       // Pinned scroll (Runs on all devices)
       function getScrollAmount() {
+        if (window.innerWidth <= 768) {
+          // Explicit manual math to guarantee no blank space on mobile
+          const cardsCount = document.querySelectorAll('.svc-card').length || 6;
+          const cardWidth = 240;
+          const gap = 16;
+          const paddingSides = 40; // 20px left + 20px right
+          const totalWidth = (cardsCount * cardWidth) + ((cardsCount - 1) * gap) + paddingSides;
+          return Math.max(0, totalWidth - window.innerWidth);
+        }
         let trackWidth = track.scrollWidth;
-        // Desktop needs buffer for fade mask, mobile ends exactly at the last card
-        let buffer = window.innerWidth > 768 ? 160 : 0;
+        let buffer = 160;
         return Math.max(0, trackWidth - window.innerWidth + buffer);
       }
 
