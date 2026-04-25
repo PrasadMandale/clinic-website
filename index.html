@@ -75,7 +75,8 @@
       padding: 0
     }
 
-    html, body {
+    html,
+    body {
       overflow-x: hidden;
       max-width: 100%;
     }
@@ -2178,40 +2179,61 @@
         font-size: clamp(1.8rem, 6vw, 2.2rem);
       }
 
+      #theme-toggle {
+        display: none;
+        /* Hide dark mode toggle on mobile */
+      }
+
       .nav-logo-link {
-        gap: 8px;
+        gap: 10px;
+        align-items: center;
       }
 
       .nav-logo-img {
-        height: 36px;
+        height: 40px;
       }
 
       .nav-logo-title {
-        font-size: 1.1rem;
+        font-size: 1.15rem;
+        line-height: 1.1;
       }
 
       .nav-logo-sub {
-        display: none;
-      }
-
-      .services-horiz-wrap {
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        padding-bottom: 20px;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .services-horiz-wrap::-webkit-scrollbar {
-        display: none;
+        display: block;
+        /* Unhide subtitle */
+        font-size: 0.7rem;
+        line-height: 1.2;
+        white-space: normal;
+        /* Allow wrapping */
+        max-width: 190px;
       }
 
       .services-horiz-track {
-        padding: 20px;
+        padding: 20px 40px 40px 20px;
+        /* Reduced right padding for mobile */
+        gap: 16px;
+        /* Tighter gap */
       }
 
       .svc-card {
-        scroll-snap-align: center;
-        flex: 0 0 280px;
+        flex: 0 0 240px;
+        /* Smaller cards so multiple are visible */
+      }
+
+      .svc-img-wrap {
+        height: 140px;
+      }
+
+      .svc-card-body {
+        padding: 16px;
+      }
+
+      .svc-title {
+        font-size: 1.15rem;
+      }
+
+      .svc-desc {
+        font-size: 0.85rem;
       }
 
       .sw {
@@ -3131,42 +3153,41 @@
         }
       );
 
-      // Pinned scroll
-      let mm = gsap.matchMedia();
-      mm.add("(min-width: 769px)", () => {
-        function getScrollAmount() {
-          let trackWidth = track.scrollWidth;
-          return Math.max(0, trackWidth - window.innerWidth + 160); // buffer
-        }
+      // Pinned scroll (Runs on all devices)
+      function getScrollAmount() {
+        let trackWidth = track.scrollWidth;
+        // Adjust buffer for mobile since padding/gap is smaller
+        let buffer = window.innerWidth > 768 ? 160 : 60;
+        return Math.max(0, trackWidth - window.innerWidth + buffer);
+      }
 
-        const tween = gsap.to(track, {
-          x: () => -getScrollAmount(),
-          ease: "none"
-        });
-
-        ScrollTrigger.create({
-          trigger: "#services",
-          start: "center center",
-          end: () => `+=${getScrollAmount()}`,
-          pin: true,
-          animation: tween,
-          scrub: 1,
-          invalidateOnRefresh: true
-        });
-
-        if (fill) {
-          gsap.to(fill, {
-            width: "100%",
-            ease: "none",
-            scrollTrigger: {
-              trigger: "#services",
-              start: "center center",
-              end: () => `+=${getScrollAmount()}`,
-              scrub: 1
-            }
-          });
-        }
+      const tween = gsap.to(track, {
+        x: () => -getScrollAmount(),
+        ease: "none"
       });
+
+      ScrollTrigger.create({
+        trigger: "#services",
+        start: "center center",
+        end: () => `+=${getScrollAmount()}`,
+        pin: true,
+        animation: tween,
+        scrub: 1,
+        invalidateOnRefresh: true
+      });
+
+      if (fill) {
+        gsap.to(fill, {
+          width: "100%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: "#services",
+            start: "center center",
+            end: () => `+=${getScrollAmount()}`,
+            scrub: 1
+          }
+        });
+      }
     })();
 
     // ─── WHY CHOOSE US ─────────────────────────────────────────────
