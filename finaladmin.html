@@ -1190,36 +1190,36 @@ function updateStats(){
 }
 
 function updateTodayBanner(){
-  const todayStr = new Date().toISOString().split('T')[0];
+  // Get local timezone YYYY-MM-DD
+  const now = new Date();
+  const tzOffset = now.getTimezoneOffset() * 60000;
+  const todayStr = new Date(now.getTime() - tzOffset).toISOString().split('T')[0];
+
   const todayAppts = allData.filter(r=>r.date===todayStr);
   const todayPend  = todayAppts.filter(r=>r.status==='pending').length;
   document.getElementById('today-total').textContent = todayAppts.length;
   document.getElementById('today-pending-label').textContent = todayPend + ' pending today';
   updateTopbarDate();
 
-  // next upcoming (sort by time, pick first pending/confirmed in future or today)
-  const now = new Date();
-  const nowMins = now.getHours()*60 + now.getMinutes();
-  const upcoming = todayAppts
-    .filter(r=>r.status!=='done'&&r.status!=='cancelled')
-    .map(r=>{
-      // parse time like "10:00 AM"
-      const [t,mer] = (r.time||'').split(' ');
-      const [hh,mm] = (t||'0:0').split(':').map(Number);
-      let h = hh; if(mer==='PM'&&hh!==12)h+=12; if(mer==='AM'&&hh===12)h=0;
-      return {...r, sortMins: h*60+(mm||0)};
+  // next upcoming (sort by time, pick first confirmed in future or today)
+  const upcoming = allData
+    .filter(r => r.status === 'confirmed')
+    .filter(r => {
+      if (!r.date || !r.time) return false;
+      const apptDateTime = new Date(`${r.date} ${r.time}`);
+      return apptDateTime > now;
     })
-    .filter(r=>r.sortMins >= nowMins)
-    .sort((a,b)=>a.sortMins-b.sortMins);
+    .sort((a,b) => new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`));
 
   if(upcoming.length>0){
     const n = upcoming[0];
-    document.getElementById('today-next-time').textContent = n.time||'—';
+    const displayTime = n.date === todayStr ? (n.time || '—') : `${n.date} | ${n.time || ''}`;
+    document.getElementById('today-next-time').textContent = displayTime;
     document.getElementById('today-next-name').textContent = n.name||'—';
     document.getElementById('today-next-tx').textContent   = n.treatment||'—';
   } else {
     document.getElementById('today-next-time').textContent = '—';
-    document.getElementById('today-next-name').textContent = 'No more today';
+    document.getElementById('today-next-name').textContent = 'No upcoming appointments';
     document.getElementById('today-next-tx').textContent   = '';
   }
 }

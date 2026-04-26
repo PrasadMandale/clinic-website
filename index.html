@@ -3469,7 +3469,8 @@
     setInterval(() => { cur = cur >= maxS() ? 0 : cur + 1; upd(); }, 4500);
 
     // ─── BOOKING FORM + SUPABASE + WHATSAPP ────────────────────────
-    document.getElementById('f-date').min = new Date().toISOString().split('T')[0];
+    const tzOffset = new Date().getTimezoneOffset() * 60000;
+    document.getElementById('f-date').min = new Date(Date.now() - tzOffset).toISOString().split('T')[0];
 
     function vf(id, eid, fn) {
       const el = document.getElementById(id);
@@ -3495,7 +3496,7 @@
       const notes = document.getElementById('f-notes');
 
       const v1 = vf('f-name', 'e-name', v => v.length >= 2);
-      const v2 = vf('f-phone', 'e-phone', v => /^[6-9]\d{9}$/.test(v));
+      const v2 = vf('f-phone', 'e-phone', v => v.replace(/\D/g, '').length >= 10);
       const v3 = vf('f-date', 'e-date', v => v.length > 0);
       const v4 = vf('f-time', 'e-time', v => v.length > 0);
       const v5 = vf('f-treatment', 'e-treatment', v => v.length > 0);
@@ -3510,20 +3511,30 @@
       btnLoader.style.display = 'inline-block';
 
       try {
+        // Fix: Ensure date is in YYYY-MM-DD format for Supabase
+        const rawDate = date.value;
+        let formattedDate;
+
+        if (rawDate.includes('-') && rawDate.split('-')[0].length === 2) {
+          const parts = rawDate.split('-');
+          formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        } else {
+          formattedDate = rawDate;
+        }
+
         const { error } = await db.from('appointments').insert([{
           name: name.value.trim(),
           phone: phone.value.trim(),
-          date: date.value,
+          date: formattedDate,
           time: time.value,
           treatment: treatment.value,
           notes: notes.value.trim(),
-          status: 'pending',
-          created_at: new Date().toISOString()
+          status: 'pending'
         }]);
 
         if (error) {
-          console.error('Supabase error:', error);
-          alert('❌ Could not save appointment. Please try again or call us directly.');
+          console.error('Supabase Error Details:', error);
+          alert('❌ Booking failed: ' + (error.message || 'Please try again.'));
           btn.disabled = false;
           btnText.style.display = 'flex';
           btnLoader.style.display = 'none';
